@@ -1,0 +1,27 @@
+{
+  "name": "pipel1ne",
+  "version": "1.0.0",
+  "description": "pipel1ne",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan Edradan",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.10.0",
+    "cookie-parser": "^1.3.3",
+    "ejs": "^1.0.0",
+    "express": "^4.10.6",
+    "express-session": "^1.9.3",
+    "indeed-api": "^1.0.0",
+    "method-override": "^2.3.0",
+    "passport": "^0.2.1",
+    "passport-local": "^1.0.0",
+    "path": "^0.4.9",
+    "pg": "^4.1.1",
+    "querystring": "^0.2.0",
+    "request": "^2.51.0",
+    "restler": "^3.2.2"
+  }
+}
