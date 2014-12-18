@@ -140,18 +140,29 @@ function initialize() {
 google.maps.event.addDomListener(window, 'load', initialize);
 
   </script>
+
     <style>
       #target {
         width: 345px;
       }
     </style>
+
   </head>
+
   <body>
     <h1><%= user.first_name %> <%= user.last_name %>'s Saved Jobs </h1>
       <ul>
-        <%= user.first_name %> <%= user.last_name %>'s first saved job
+        <% for (var i = 0; i < jobs.length; i++) { %>
+          <li>
+            Job Title: <%= jobs[i].title %><br>
+            Company: <%= jobs[i].company %><br>
+          </li>
+        <% } %>
+       
       </ul>
       <button><a href="http://localhost:5000/">Main Page</a></button> 
+      <button><a href="http://localhost:5000/users/edit">Edit Profile</a></button> 
+      <button><a href="http://localhost:5000/jobs/edit">Edit Saved Jobs</a></button> 
       <form method="GET" action="/result" >
         <input type="text" name = "jobkeys" placeholder="Keyword Search" >
         <button class = "btn-hot">Search</button>

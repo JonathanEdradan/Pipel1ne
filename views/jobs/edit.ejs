@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Edit Jobs</title>
+</head>
+<body>
+	 <h1><%= user.first_name %> <%= user.last_name %>'s Saved Jobs </h1>
+      <ul>
+        <% for (var i = 0; i < jobs.length; i++) { %>
+          <li>
+            Job Title: <%= jobs[i].title %><br>
+            Company: <%= jobs[i].company %><br>
+            Job Key: <%= jobs[i].job_key %>
+            <a class="deleteJob" href="/jobs/delete/<%= jobs[i].id %>">Click to DELETE</a>
+          </li>
+        <% } %>
+      </ul>
+  <form method="GET" action="/profile/<%= user.id %>"> 
+          <input type="submit" value="Profile">
+  </form>
+
+</body>
+</html>

@@ -33,7 +33,7 @@ var Api = function()
 };
 
 module.exports = new Api();
-
+// Passport Authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -52,22 +52,14 @@ passport.deserializeUser(function(id, done) {
   // });
 });
 
-
-// Set-up routes
-app.listen(5000, function() {
-	console.log("*****Pipel1ne Server is Up!*****");
-});
-
 var localStrategy = new LocalStrategy(
   function(username, password, done) {
   	debugger
     db.query('SELECT * FROM users WHERE username = $1', [username], function(err, dbRes) {
     	var user = dbRes.rows[0];
     	console.log(username)
-
     	console.log(user);
     	debugger
-
       if (err) { return done(err); }
       if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
       if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
@@ -98,51 +90,90 @@ db.query('INSERT INTO users (first_name, last_name, city, state, service, rank, 
   });
 });
 
-// app.get('/sessions/new', function(req, res) {
-//   res.render('sessions/new');
-// });
-
 app.post('/', passport.authenticate('local', 
   {failureRedirect: '/'}), function(req, res) {
     res.redirect('/');
 });
-
+// Logout 
 app.delete('/', function(req, res) {
   req.logout();
   res.redirect('/');
 });
 
 // Profile routes
-
-// app.get('/profile/new', function(req, res) {
-//   res.render('posts/new');
-// });
-
-// app.post('/profile', function(req, res) {
-//   db.query('INSERT INTO posts (title, body, user_id) VALUES ($1, $2, $3)', [req.body.title, req.body.body, req.user.id], function(err, dbRes) {
-//     if (!err) {
-//       res.redirect('posts');
-//     }
-//   });
-// });
-
-// app.get('/posts', function(req, res) {
-//   db.query('SELECT * FROM posts', function(err, dbRes) {
-//     res.render('posts/index', { posts: dbRes.rows})
-//   })
-// });
 app.get('/search', function(req, res) {
   res.render('search/search');
 });
 
 app.get('/profile/:id', function(req, res) {
-  db.query('SELECT * FROM users WHERE id = $1', [req.params.id], function(err, dbRes) {
+  //SELECT owners.name, owners.age, properties.name, number_of_units FROM owners INNER JOIN properties ON owners.owner_id = properties.owner_id;
+  db.query('SELECT * FROM users WHERE id = $1', [req.params.id], function(err, users) {
     if (!err) {
-    res.render('profile/show', {user: dbRes.rows[0]});
+      db.query('SELECT * FROM jobs WHERE user_id = $1', [req.params.id], function(err, jobs) {
+        if (!err) {
+          res.render('profile/show', {jobs: jobs.rows, user: users.rows[0]});
+        } else {
+          console.log(err);
+        }
+      });
+    } else {
+      console.log(err);
+    }
+  });
+});
+// edit user profile
+app.get('/users/edit', function(req, res) {
+  db.query("SELECT * FROM users WHERE id = $1", [req.user.id], function(err, dbResult) {
+    if (!err) {
+      res.render('users/edit', { users: dbResult.rows[0] });
+    } else {
+      console.log(err);
     }
   });
 });
 
+app.patch('/users/edit', function(req, res) {
+  var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email, req.user.id];
+
+  db.query("UPDATE users SET first_name = $1, last_name = $2, city = $3, state = $4, service = $5, rank = $6, security_clearance = $7, skills = $8, username = $9, password = $10, email = $11 WHERE id = $12", params, function(err, dbResult) {
+    if (!err) {
+      res.redirect('/profile/' + req.user.id);
+    }
+  });
+});
+// Edit Saved Jobs
+app.get('/jobs/edit', function(req, res) {
+  db.query("SELECT * FROM users WHERE id = $1", [req.user.id], function(err, users) {
+    if (!err) {
+      db.query('SELECT * FROM jobs WHERE user_id = $1', [req.user.id], function(err, jobs) {
+        if (!err) {
+          res.render('jobs/edit', {jobs: jobs.rows, user: users.rows[0]});
+        } else {
+          console.log(err);
+        }
+      });
+    } else {
+      console.log(err);
+    }
+  });
+});
+
+app.get('/jobs/delete/:id', function(req, res) {
+  var jobId = req.params;
+  //jobId = {id: 50}
+  
+  var id = jobId["id"];
+    console.log(id);
+  
+  db.query('DELETE FROM jobs WHERE id =' + id, function(err, dbRes) {
+    if (!err) {
+    console.log("Success");
+    } else {
+      console.log(err, "There is something wrong!!!!!!");
+    }
+  });
+});
+// Indeed Search
 app.get('/result', function(req, res) {
   var location = req.query['l'];
   request('http://api.indeed.com/ads/apisearch?publisher=9438122058289035&format=json&v=2&q=' + location, function (error, response, body) {
@@ -152,63 +183,30 @@ app.get('/result', function(req, res) {
       res.render('results/results', {searchResults: searchResults, user: req.user});
   })
 }); 
-
-
+// Indeed Job Key Search
 app.get('/save_job/:jobkey', function(req, res) {
   var jobkey = req.params.jobkey;
   request(' http://api.indeed.com/ads/apigetjobs?publisher=9438122058289035&jobkeys='+ jobkey + '&format=json&v=2', function (error, response, body) {
-
+    if (error) {
+      console.log(error);
+    }
     var searchResults = JSON.parse(body);
-    console.log("Job title: " + searchResults.results[0].jobtitle, "Company: " + searchResults.results[0].company) //use to get searchResults keys in the console
+    //use to get searchResults keys in the console
+    console.log("Job title: " + searchResults.results[0].jobtitle, "Company: " + searchResults.results[0].company) 
 
-    // var jobInfo = [res.searchResults[0].jobtitle, res.searchResults[0].company, res.searchResults.[0].formattedLocationFull, res.searchResults.results[0].date, res.searchResults.results[0].snippet, res.searchResults.results[0].source, res.searchResults.results[0].jobkey, res.searchResults.results[0].formattedRelativeTime];    
+     var jobInfo = [searchResults.results[0].jobtitle, searchResults.results[0].company, searchResults.results[0].formattedLocationFull, searchResults.results[0].date, searchResults.results[0].snippet, searchResults.results[0].source, searchResults.results[0].jobkey, searchResults.results[0].formattedRelativeTime, req.user.id];   
     
-    // db.query('INSERT INTO jobs (title, company, location, date, snippet, source, job_key, date_posted) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', jobInfo, function(err, dbRes) {
-    //   console.log("I made it this far");
-    // });
+    db.query('INSERT INTO jobs (title, company, location, date, snippet, source, job_key, date_posted, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', jobInfo, function(err, dbRes) {
+      if (!err) {
+      console.log("I made it this far");
+      } else {
+        console.log(err);
+      }
+    });
   });
 });
 
-app.post('/result_action', function(req, res) {
-  //add data to jobs table
-
-var jobs = req.body;
-console.log(jobs);
-// create new path for saved jobs
-
-// for (var i = 0; i < jobs.length; i++) {
-//   console.log(jobs)
-// };
+// Set-up Server
+app.listen(5000, function() {
+  console.log("*****Pipel1ne Server is Up!*****");
 });
-// app.get('/posts/:id/edit', function(req, res) {
-//   db.query('SELECT * FROM posts WHERE id = $1', [req.params.id], function(err, dbRes) {
-//     if (!err) {
-//     res.render('posts/edit', {post: dbRes.rows[0]});
-//     }
-//   });
-// });
-
-// app.patch('/posts/:id', function(req, res) {
-//   db.query('UPDATE posts SET title = $1, body = $2 WHERE id = $3', [req.body.title, req.body.body, req.params.id], function(err, dbRes) {
-//     if (!err) {
-//       res.redirect('/posts/' + req.params.id);
-//     }
-//   });
-// });
-
-// app.delete('/posts/:id', function(req, res) {
-//   db.query('DELETE FROM posts WHERE id = $1', [req.params.id], function(err, dbRes) {
-//     if (!err) {
-//       res.redirect('/posts');
-//     }
-//   });
-// });
-// this route logs you out after restarting server
-// app.get('/posts/new', function(req, res) {
-//  if (req.user) {
-//  res.render('posts/new');
-//  } else {
-//  res.redirect('/');
-//  }
-
-// });
