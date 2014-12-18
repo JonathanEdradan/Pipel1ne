@@ -23,6 +23,12 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+
+// Set-up Server
+app.listen(5000, function() {
+  console.log("*****Pipel1ne Server is Up!*****");
+});
+
 // Indeed API
 var Api = function()
 {
@@ -33,6 +39,7 @@ var Api = function()
 };
 
 module.exports = new Api();
+
 // Passport Authentication
 app.use(passport.initialize());
 app.use(passport.session());
@@ -80,12 +87,15 @@ app.get('/users/new', function(req, res) {
 });
 
 app.post('/users', function(req, res) {
-  //add data to users table
-var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email];
 
-db.query('INSERT INTO users (first_name, last_name, city, state, service, rank, security_clearance, skills, username, password, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', params, function(err, dbRes) {
+//add data to users table
+var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email, req.body.address];
+
+db.query('INSERT INTO users (first_name, last_name, city, state, service, rank, security_clearance, skills, username, password, email, address) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)', params, function(err, dbRes) {
     if (!err) {
     res.redirect('/');
+    } else {
+      console.log(err);
     }
   });
 });
@@ -94,6 +104,7 @@ app.post('/', passport.authenticate('local',
   {failureRedirect: '/'}), function(req, res) {
     res.redirect('/');
 });
+
 // Logout 
 app.delete('/', function(req, res) {
   req.logout();
@@ -101,12 +112,7 @@ app.delete('/', function(req, res) {
 });
 
 // Profile routes
-app.get('/search', function(req, res) {
-  res.render('search/search');
-});
-
 app.get('/profile/:id', function(req, res) {
-  //SELECT owners.name, owners.age, properties.name, number_of_units FROM owners INNER JOIN properties ON owners.owner_id = properties.owner_id;
   db.query('SELECT * FROM users WHERE id = $1', [req.params.id], function(err, users) {
     if (!err) {
       db.query('SELECT * FROM jobs WHERE user_id = $1', [req.params.id], function(err, jobs) {
@@ -121,6 +127,7 @@ app.get('/profile/:id', function(req, res) {
     }
   });
 });
+
 // edit user profile
 app.get('/users/edit', function(req, res) {
   db.query("SELECT * FROM users WHERE id = $1", [req.user.id], function(err, dbResult) {
@@ -133,14 +140,15 @@ app.get('/users/edit', function(req, res) {
 });
 
 app.patch('/users/edit', function(req, res) {
-  var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email, req.user.id];
+  var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email, req.body.address, req.user.id];
 
-  db.query("UPDATE users SET first_name = $1, last_name = $2, city = $3, state = $4, service = $5, rank = $6, security_clearance = $7, skills = $8, username = $9, password = $10, email = $11 WHERE id = $12", params, function(err, dbResult) {
+  db.query("UPDATE users SET first_name = $1, last_name = $2, city = $3, state = $4, service = $5, rank = $6, security_clearance = $7, skills = $8, username = $9, password = $10, email = $11, address = $12 WHERE id = $13", params, function(err, dbResult) {
     if (!err) {
       res.redirect('/profile/' + req.user.id);
     }
   });
 });
+
 // Edit Saved Jobs
 app.get('/jobs/edit', function(req, res) {
   db.query("SELECT * FROM users WHERE id = $1", [req.user.id], function(err, users) {
@@ -173,6 +181,7 @@ app.get('/jobs/delete/:id', function(req, res) {
     }
   });
 });
+
 // Indeed Search
 app.get('/result', function(req, res) {
   var location = req.query['l'];
@@ -183,6 +192,7 @@ app.get('/result', function(req, res) {
       res.render('results/results', {searchResults: searchResults, user: req.user});
   })
 }); 
+
 // Indeed Job Key Search
 app.get('/save_job/:jobkey', function(req, res) {
   var jobkey = req.params.jobkey;
@@ -206,7 +216,5 @@ app.get('/save_job/:jobkey', function(req, res) {
   });
 });
 
-// Set-up Server
-app.listen(5000, function() {
-  console.log("*****Pipel1ne Server is Up!*****");
-});
+// Goelocation request
+app.get('/')

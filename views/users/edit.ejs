@@ -5,22 +5,21 @@
 </head>
 <body>
 	<h1>Edit Profile</h1>
-	<form method="POST" action="/users/edit?_method=PATCH">
-		<input type="text" 		name="first_name"          	placeholder="First Name" 			value="<%= users.first_name %>">
-		<input type="text" 		name="last_name"           	placeholder="Last Name" 			value="<%= users.last_name %>">
-		<input type="text" 		name="city"                	placeholder="City" 					value="<%= users.city %>">
-		<input type="text" 		name="state"               	placeholder="State" 				value="<%= users.state %>">
-		<input type="text" 		name="service"             	placeholder="Service Branch" 		value="<%= users.service %>">
-		<input type="text" 		name="rank"                	placeholder="Rank" 					value="<%= users.rank %>">
-		<input type="text" 		name="security_clearance"  	placeholder="Security Clearance" 	value="<%= users.security_clearance %>">
-		<input type="text" 		name="skills"              	placeholder="Skills" 				value="<%= users.skills %>">
-		<input type="text" 		name="username"           	placeholder="Username" 				value="<%= users.username %>">
-		<input type="password" 	name="password"        		placeholder="Password" 				value="<%= users.password %>">
-		<input type="text" 		name="email"               	placeholder="Email" 				value="<%= users.email %>">
-		<input type="submit">
-	</form>
-	
+		<form method="POST" action="/users/edit?_method=PATCH">
+			<input type="text" 		name="first_name"          	placeholder="First Name" 			value="<%= users.first_name %>">
+			<input type="text" 		name="last_name"           	placeholder="Last Name" 			value="<%= users.last_name %>">
+			<input type="text" 		name="address"              placeholder="Street Address" 		value="<%= users.address %>">
+			<input type="text" 		name="city"                	placeholder="City" 					value="<%= users.city %>">
+			<input type="text" 		name="state"               	placeholder="State" 				value="<%= users.state %>">
+			<input type="text" 		name="service"             	placeholder="Service Branch" 		value="<%= users.service %>">
+			<input type="text" 		name="rank"                	placeholder="Rank" 					value="<%= users.rank %>">
+			<input type="text" 		name="security_clearance"  	placeholder="Security Clearance" 	value="<%= users.security_clearance %>">
+			<input type="text" 		name="skills"              	placeholder="Skills" 				value="<%= users.skills %>">
+			<input type="text" 		name="username"           	placeholder="Username" 				value="<%= users.username %>">
+			<input type="password" 	name="password"        		placeholder="Password" 				value="<%= users.password %>">
+			<input type="text" 		name="email"               	placeholder="Email" 				value="<%= users.email %>">
+			<input type="submit">
+		</form>
 	<button><a href="http://localhost:5000/">Main Page</a></button> 
-
 </body>
 	</html>

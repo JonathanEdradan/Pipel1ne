@@ -5,20 +5,21 @@
 </head>
 <body>
 	<h1>Sign-up</h1>
-	<form method="POST" action="/users">
-		<input type="text" 		name="first_name"          	placeholder="First Name" >
-		<input type="text" 		name="last_name"           	placeholder="Last Name" >
-		<input type="text" 		name="city"                	placeholder="City" >
-		<input type="text" 		name="state"               	placeholder="State" >
-		<input type="text" 		name="service"             	placeholder="Service Branch" >
-		<input type="text" 		name="rank"                	placeholder="Rank" >
-		<input type="text" 		name="security_clearance"  	placeholder="Security Clearance" >
-		<input type="text" 		name="skills"              	placeholder="Skills" >
-		<input type="text" 		name="username"           	placeholder="Username" >
-		<input type="password" 	name="password"        		placeholder="Password" >
-		<input type="text" 		name="email"               	placeholder="Email" >
-		<input type="submit">
-	</form>
+		<form method="POST" action="/users">
+			<input type="text" 				name="first_name"          	placeholder="First Name" >
+			<input type="text" 				name="last_name"           	placeholder="Last Name" >
+			<input type="text" 				name="address"              placeholder="Street Address" >
+			<input type="text" 				name="city"                	placeholder="City" >
+			<input type="text" 				name="state"               	placeholder="State" >
+			<input type="text" 				name="service"             	placeholder="Service Branch" >
+			<input type="text" 				name="rank"                	placeholder="Rank" >
+			<input type="text" 				name="security_clearance"  	placeholder="Security Clearance" >
+			<textarea rows="10" cols="25" 	name="skills"              	placeholder="Seperate each skill with a comma.  Be as specific as possible. Example - cryptologist, orthodontist, counterintelligence etc."></textarea>
+			<input type="text" 				name="username"           	placeholder="Username" >
+			<input type="password" 			name="password"        		placeholder="Password" >
+			<input type="text" 				name="email"               	placeholder="Email" >
+			<input type="submit">
+		</form>
 	
 	<button><a href="http://localhost:5000/">Main Page</a></button> 
 
