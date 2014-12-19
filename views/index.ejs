@@ -54,7 +54,12 @@
   <div class="jumbotron">
     <div class="page-header">
       <h1>Welcome to Pipel1ne <small>The #1 source for veterans</small></h1>
+      <% if (!user)  { %>
       <h3>You have sacrificed so much.  Now it is our turn to serve you.</h3>
+      <% } %>
+      <% if (user)  { %>
+      <h3>Thank you <%= user.first_name %>! How may we serve</h3>
+       <% } %>
     </div>     
   </div>
 
