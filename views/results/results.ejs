@@ -23,14 +23,16 @@
 				Job Key: <%= searchResults.results[i].jobkey %><br>
 				Date Posted: <%= searchResults.results[i].formattedRelativeTime %><br>
 				Source: <%= searchResults.results[i].source %><br> 
-		<a class="saveJob" href="/save_job/<%= searchResults.results[i].jobkey %>">Click to Save</a>
+				<form id="saveJob" method="post" action="/jobs/<%= searchResults.results[i].jobkey %>"> 
+          			<input type="submit" value="Save Job">
+    			</form>
 		<% }; %>
 	<!-- <form method="POST" action="/profile/<%= user.id %>"> 
           <input type="submit" value="Save Selected Jobs">
     </form>	 -->
     
 
-    <form method="GET" action="/profile/<%= user.id %>"> 
+    <form method="GET" action="/users/<%= user.id %>"> 
           <input type="submit" value="Profile">
     </form>
   </div>

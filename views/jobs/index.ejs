@@ -11,11 +11,13 @@
             Job Title: <%= jobs[i].title %><br>
             Company: <%= jobs[i].company %><br>
             Job Key: <%= jobs[i].job_key %>
-            <a class="deleteJob" href="/jobs/delete/<%= jobs[i].id %>">Click to DELETE</a>
+            <form id="deleteJob" method="post" action="/jobs/<%= jobs[i].id %>?_method=DELETE"> 
+                <input type="submit" value="Delete Job">
+            </form>
           </li>
         <% } %>
       </ul>
-  <form method="GET" action="/profile/<%= user.id %>"> 
+  <form method="GET" action="/users/<%= user.id %>"> 
           <input type="submit" value="Profile">
   </form>
 

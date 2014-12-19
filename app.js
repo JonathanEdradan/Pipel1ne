@@ -25,7 +25,7 @@ app.use(session({
 }));
 
 // Set-up Server
-app.listen(5000, function() {
+app.listen(process.env.PORT || 5000, function() {
   console.log("*****Pipel1ne Server is Up!*****");
 });
 
@@ -83,79 +83,103 @@ app.get('/', function(req, res) {
 });
 
 app.get('/users/new', function(req, res) {
-  res.render('users/new');
+  if (!req.user) {
+    res.render('users/new');
+  } else {
+    res.redirect('/');
+  }
 });
 
 app.post('/users', function(req, res) {
+  if (!req.user) {
+    //add data to users table
+    var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email, req.body.address];
 
-//add data to users table
-var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email, req.body.address];
-
-db.query('INSERT INTO users (first_name, last_name, city, state, service, rank, security_clearance, skills, username, password, email, address) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)', params, function(err, dbRes) {
-    if (!err) {
+    db.query('INSERT INTO users (first_name, last_name, city, state, service, rank, security_clearance, skills, username, password, email, address) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)', params, function(err, dbRes) {
+        if (!err) {
+        res.redirect('/');
+        } else {
+          console.log(err);
+        }
+    });
+  } else {
     res.redirect('/');
-    } else {
-      console.log(err);
-    }
-  });
+  }
 });
 
-app.post('/', passport.authenticate('local', 
+app.post('/sessions', passport.authenticate('local', 
   {failureRedirect: '/'}), function(req, res) {
     res.redirect('/');
 });
 
 // Logout 
-app.delete('/', function(req, res) {
+app.delete('/sessions', function(req, res) {
   req.logout();
   res.redirect('/');
 });
 
 // Profile routes
-app.get('/profile/:id', function(req, res) {
-  db.query('SELECT * FROM users WHERE id = $1', [req.params.id], function(err, users) {
-    if (!err) {
-      db.query('SELECT * FROM jobs WHERE user_id = $1', [req.params.id], function(err, jobs) {
-        if (!err) {
-          res.render('profile/show', {jobs: jobs.rows, user: users.rows[0]});
-        } else {
-          console.log(err);
-        }
-      });
-    } else {
-      console.log(err);
-    }
-  });
+app.get('/users/:id', function(req, res) {
+  var paramsId = parseInt(req.params.id);
+  if (req.user.id === paramsId) {
+    db.query('SELECT * FROM users WHERE id = $1', [req.params.id], function(err, users) {
+      if (!err) {
+        db.query('SELECT * FROM jobs WHERE user_id = $1', [req.params.id], function(err, jobs) {
+          if (!err) {
+            res.render('users/show', {jobs: jobs.rows, user: users.rows[0]});
+          } else {
+            console.log(err);
+          }
+        });
+      } else {
+        console.log(err);
+      }
+    });
+  } else {
+    res.end("I am broken")
+  }
 });
 
 // edit user profile
-app.get('/users/edit', function(req, res) {
-  db.query("SELECT * FROM users WHERE id = $1", [req.user.id], function(err, dbResult) {
-    if (!err) {
-      res.render('users/edit', { users: dbResult.rows[0] });
-    } else {
-      console.log(err);
-    }
-  });
+app.get('/users/:id/edit', function(req, res) {
+  // Check for authorization
+  var paramsId = parseInt(req.params.id);
+  if (req.user.id === paramsId) {
+    db.query("SELECT * FROM users WHERE id = $1", [req.params.id], function(err, dbResult) {
+      if (!err) {
+        res.render('users/edit', { user: dbResult.rows[0] });
+      } else {
+        console.log(err);
+      }
+    });
+  } else {
+    // unauthorized!!
+    res.redirect('/');
+  }
 });
 
-app.patch('/users/edit', function(req, res) {
-  var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email, req.body.address, req.user.id];
+app.patch('/users/:id', function(req, res) {
+  var paramsId = parseInt(req.params.id);
+   if (req.user.id === paramsId) {
+      var params = [req.body.first_name, req.body.last_name, req.body.city, req.body.state, req.body.service, req.body.rank, req.body.security_clearance, req.body.skills, req.body.username, req.body.password, req.body.email, req.body.address, req.params.id];
 
-  db.query("UPDATE users SET first_name = $1, last_name = $2, city = $3, state = $4, service = $5, rank = $6, security_clearance = $7, skills = $8, username = $9, password = $10, email = $11, address = $12 WHERE id = $13", params, function(err, dbResult) {
-    if (!err) {
-      res.redirect('/profile/' + req.user.id);
-    }
-  });
+      db.query("UPDATE users SET first_name = $1, last_name = $2, city = $3, state = $4, service = $5, rank = $6, security_clearance = $7, skills = $8, username = $9, password = $10, email = $11, address = $12 WHERE id = $13", params, function(err, dbResult) {
+        if (!err) {
+          res.redirect('/users/' + req.user.id);
+        }
+      });
+   } else {
+    res.redirect('/');
+   }  
 });
 
-// Edit Saved Jobs
-app.get('/jobs/edit', function(req, res) {
+// List saved Jobs
+app.get('/jobs', function(req, res) {
   db.query("SELECT * FROM users WHERE id = $1", [req.user.id], function(err, users) {
     if (!err) {
       db.query('SELECT * FROM jobs WHERE user_id = $1', [req.user.id], function(err, jobs) {
         if (!err) {
-          res.render('jobs/edit', {jobs: jobs.rows, user: users.rows[0]});
+          res.render('jobs/index', {jobs: jobs.rows, user: users.rows[0]});
         } else {
           console.log(err);
         }
@@ -166,10 +190,9 @@ app.get('/jobs/edit', function(req, res) {
   });
 });
 
-app.get('/jobs/delete/:id', function(req, res) {
+app.delete('/jobs/:id', function(req, res) {
   var jobId = req.params;
-  //jobId = {id: 50}
-  
+  //find out if this job is assoc with current user
   var id = jobId["id"];
     console.log(id);
   
@@ -183,38 +206,46 @@ app.get('/jobs/delete/:id', function(req, res) {
 });
 
 // Indeed Search
-app.get('/result', function(req, res) {
-  var location = req.query['l'];
-  request('http://api.indeed.com/ads/apisearch?publisher=9438122058289035&format=json&v=2&q=' + location, function (error, response, body) {
-  
-    var searchResults = JSON.parse(body);
-    console.log(searchResults) //use to get searchResults keys in the console
-      res.render('results/results', {searchResults: searchResults, user: req.user});
-  })
+app.get('/search', function(req, res) {
+  if (req.user) {
+    var location = req.query['l'];
+    request('http://api.indeed.com/ads/apisearch?publisher=9438122058289035&format=json&v=2&q=' + location, function (error, response, body) {
+    
+      var searchResults = JSON.parse(body);
+      console.log(searchResults) //use to get searchResults keys in the console
+        res.render('results/results', {searchResults: searchResults, user: req.user});
+    });
+  } else {
+    res.redirect('/');
+  }
 }); 
 
 // Indeed Job Key Search
-app.get('/save_job/:jobkey', function(req, res) {
-  var jobkey = req.params.jobkey;
-  request(' http://api.indeed.com/ads/apigetjobs?publisher=9438122058289035&jobkeys='+ jobkey + '&format=json&v=2', function (error, response, body) {
-    if (error) {
-      console.log(error);
-    }
-    var searchResults = JSON.parse(body);
-    //use to get searchResults keys in the console
-    console.log("Job title: " + searchResults.results[0].jobtitle, "Company: " + searchResults.results[0].company) 
-
-     var jobInfo = [searchResults.results[0].jobtitle, searchResults.results[0].company, searchResults.results[0].formattedLocationFull, searchResults.results[0].date, searchResults.results[0].snippet, searchResults.results[0].source, searchResults.results[0].jobkey, searchResults.results[0].formattedRelativeTime, req.user.id];   
-    
-    db.query('INSERT INTO jobs (title, company, location, date, snippet, source, job_key, date_posted, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', jobInfo, function(err, dbRes) {
-      if (!err) {
-      console.log("I made it this far");
-      } else {
-        console.log(err);
+app.post('/jobs/:jobkey', function(req, res) {
+  if (req.user) {
+    var jobkey = req.params.jobkey;
+    request(' http://api.indeed.com/ads/apigetjobs?publisher=9438122058289035&jobkeys='+ jobkey + '&format=json&v=2', function (error, response, body) {
+      if (error) {
+        console.log(error);
       }
+      var searchResults = JSON.parse(body);
+      //use to get searchResults keys in the console
+      console.log("Job title: " + searchResults.results[0].jobtitle, "Company: " + searchResults.results[0].company) 
+
+       var jobInfo = [searchResults.results[0].jobtitle, searchResults.results[0].company, searchResults.results[0].formattedLocationFull, searchResults.results[0].date, searchResults.results[0].snippet, searchResults.results[0].source, searchResults.results[0].jobkey, searchResults.results[0].formattedRelativeTime, req.user.id];   
+  
+      db.query('INSERT INTO jobs (title, company, location, date, snippet, source, job_key, date_posted, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', jobInfo, function(err, dbRes) {
+        if (!err) {
+        console.log("I made it this far");
+        } else {
+          console.log(err);
+        }
+      });
     });
-  });
+  } else {
+    res.redirect('/');
+  }
 });
 
-// Goelocation request
-app.get('/')
+// // Goelocation request
+// app.get('/')
