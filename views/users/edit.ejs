@@ -1,25 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Edit</title>
+  <script type="text/javascript" src="http://gdc.indeed.com/ads/apiresults.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <title>Edit user</title>  
 </head>
 <body>
-	<h1>Edit Profile</h1>
-		<form method="POST" action="/users/<%= user.id %>?_method=PATCH">
-			<input type="text" 		name="first_name"          	placeholder="First Name" 			value="<%= user.first_name %>">
-			<input type="text" 		name="last_name"           	placeholder="Last Name" 			value="<%= user.last_name %>">
-			<input type="text" 		name="address"              placeholder="Street Address" 		value="<%= user.address %>">
-			<input type="text" 		name="city"                	placeholder="City" 					value="<%= user.city %>">
-			<input type="text" 		name="state"               	placeholder="State" 				value="<%= user.state %>">
-			<input type="text" 		name="service"             	placeholder="Service Branch" 		value="<%= user.service %>">
-			<input type="text" 		name="rank"                	placeholder="Rank" 					value="<%= user.rank %>">
-			<input type="text" 		name="security_clearance"  	placeholder="Security Clearance" 	value="<%= user.security_clearance %>">
-			<input type="text" 		name="skills"              	placeholder="Skills" 				value="<%= user.skills %>">
-			<input type="text" 		name="username"           	placeholder="Username" 				value="<%= user.username %>">
-			<input type="password" 	name="password"        		placeholder="Password" 				value="<%= user.password %>">
-			<input type="text" 		name="email"               	placeholder="Email" 				value="<%= user.email %>">
-			<input type="submit">
-		</form>
-	<button><a href="http://localhost:5000/">Main Page</a></button> 
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <form method="GET" action="/" class="navbar-form navbar-left">
+          <div class="form-group">
+          <button type="submit" class="btn btn-primary">Main page</button>
+          </div>  
+        </form>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav><br>
+  <div class="jumbotron">
+    <div class="page-header">
+      <h1>Welcome to Pipel1ne <small>The #1 source for veterans</small></h1>
+      <h3>Edit profile</h3>
+    </div>     
+  </div>
+
+  <form role="form" method="POST" action="/users/<%= user.id %>?_method=PATCH">
+  	<div class="form-group">
+  	  <label>Full Name</label>
+  	  <input type="text" class="form-control" name="first_name" id="firstName" value="<%= user.first_name %>">
+  	  <input type="text" class="form-control" name="last_name" id="lastName" value="<%= user.last_name %>">
+  	</div>
+  	<div class="form-group">
+  	  <label>Address</label>
+  	  <input type="text" class="form-control" name="address" id="street" value="<%= user.address %>">
+  	  <input type="text" class="form-control" name="city" id="city" value="<%= user.city %>">
+  	  <input type="text" class="form-control" name="state" id="state" value="<%= user.state %>">
+  	</div>					
+  	<div class="form-group">					
+  	  <label>Military</label>					
+  	  <input type="text" class="form-control" name="service" id="service" value="<%= user.service %>">					
+  	  <input type="text" class="form-control" name="rank" id="rank" value="<%= user.rank %>">
+  	  <input type="text" class="form-control" name="security_clearance" id="security_clearance" value="<%= user.security_clearance %>">
+  	  <input type="text" class="form-control" name="skills" id="skills" value="<%= user.skills %>">
+  	</div>
+  	<div class="form-group">
+  	  <label>Authentication</label>
+  	  <input type="text" class="form-control" name="username" id="username" value="<%= user.username %>">
+  	  <input type="password" class="form-control" name="password" id="password" value="<%= user.password %>">
+  	  <input type="email" class="form-control" name="email" id="email" 	value="<%= user.email %>">
+  	</div>
+  	<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+  <div class="footer">
+    <p>© GA SF-WDI-14 2014 ~ Jonathan Edradan</p>
+  </div>
 </body>
-	</html>
+</html>

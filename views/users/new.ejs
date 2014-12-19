@@ -1,27 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>New User</title>
+  <script type="text/javascript" src="http://gdc.indeed.com/ads/apiresults.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <title>New user</title>  
 </head>
 <body>
-	<h1>Sign-up</h1>
-		<form method="POST" action="/users">
-			<input type="text" 				name="first_name"          	placeholder="First Name" >
-			<input type="text" 				name="last_name"           	placeholder="Last Name" >
-			<input type="text" 				name="address"              placeholder="Street Address" >
-			<input type="text" 				name="city"                	placeholder="City" >
-			<input type="text" 				name="state"               	placeholder="State" >
-			<input type="text" 				name="service"             	placeholder="Service Branch" >
-			<input type="text" 				name="rank"                	placeholder="Rank" >
-			<input type="text" 				name="security_clearance"  	placeholder="Security Clearance" >
-			<textarea rows="10" cols="25" 	name="skills"              	placeholder="Seperate each skill with a comma.  Be as specific as possible. Example - cryptologist, orthodontist, counterintelligence etc."></textarea>
-			<input type="text" 				name="username"           	placeholder="Username" >
-			<input type="password" 			name="password"        		placeholder="Password" >
-			<input type="text" 				name="email"               	placeholder="Email" >
-			<input type="submit">
-		</form>
-	
-	<button><a href="http://localhost:5000/">Main Page</a></button> 
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <form method="GET" action="/" class="navbar-form navbar-left">
+          <div class="form-group">
+          <button type="submit" class="btn btn-primary">Main page</button>
+          </div>  
+        </form>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav><br>
+  <div class="jumbotron">
+    <div class="page-header">
+      <h1>Welcome to Pipel1ne <small>The #1 source for veterans</small></h1>
+      <h3>Sign-up</h3>
+    </div>     
+  </div>
+
+  <form role="form" method="POST" action="/users">
+  	<div class="form-group">
+  	  <label>Full Name</label>
+  	  <input type="text" class="form-control" name="first_name" id="firstName" placeholder="First name:">
+  	  <input type="text" class="form-control" name="last_name" id="lastName" placeholder="Last name:">
+  	</div>
+  	<div class="form-group">
+  	  <label>Address</label>
+  	  <input type="text" class="form-control" name="address" id="street" placeholder="Street:">
+  	  <input type="text" class="form-control" name="city" id="city" placeholder="City:">
+  	  <input type="text" class="form-control" name="state" id="state" placeholder="State: (CA, VA, NV etc.)">
+  	</div>
+  	<div class="form-group">
+  	  <label>Military</label>
+  	  <input type="text" class="form-control" name="service" id="service" placeholder="Service branch: (Army, Navy, Air Force, Marine Corps etc.)">
+  	  <input type="text" class="form-control" name="rank" id="rank" placeholder="Rank when seperated:">
+  	  <input type="text" class="form-control" name="security_clearance" id="security_clearance" placeholder="Security clearance: (Top Secret/SCI, Top Secret, Secret, none.)">
+  	  <input type="text" class="form-control" name="skills" id="skills" placeholder="Job Skills (Seperate each skill with a comma.  Be as specific as possible. (cryptologist, orthodontist, counterintelligence etc.)">
+  	</div>
+  	<div class="form-group">
+  	  <label>Authentication</label>
+  	  <input type="text" class="form-control" name="username" id="username" placeholder="Username:">
+  	  <input type="password" class="form-control" name="password" id="password" placeholder="Password:">
+  	  <input type="email" class="form-control" name="email" id="email" placeholder="Email: ">
+  	</div>
+  	<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+
+  <div class="footer">
+    <p>© GA SF-WDI-14 2014 ~ Jonathan Edradan</p>
+  </div>
 
 </body>
-	</html>
+</html>

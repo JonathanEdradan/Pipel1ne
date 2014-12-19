@@ -1,97 +1,73 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script type="text/javascript" src="http://gdc.indeed.com/ads/apiresults.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-        <meta charset="utf-8">
-        <title>Geocoding service</title>
-        <style>
-          html, body, #map-canvas {
-            height: 85%;
-            width: 85%;
-            margin: 50px;
-            padding: 0px
-          }
-          #panel {
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            margin-left: -180px;
-            z-index: 5;
-            background-color: #fff;
-            padding: 5px;
-            border: 1px solid #999;
-          }
-        </style>
-        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
-        <script>
-    var geocoder;
-    var map;
+<head>
+  <script type="text/javascript" src="http://gdc.indeed.com/ads/apiresults.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <title>Profile</title>  
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <form method="GET" action="/" class="navbar-form navbar-left">
+          <div class="form-group">
+          <button type="submit" class="btn btn-primary">Main page</button>
+          </div>  
+        </form>
+        <form method="GET" action="/search" class="navbar-form navbar-left">
+          <div class="form-group">
+          <input value="<%= user.skills %> , <%= user.security_clearance %>" type="hidden" name = "l">
+          <button type="submit" class="btn btn-success">Jobs for you</button>
+          </div>  
+        </form>
+        <form method="GET" action="/search" class="navbar-form navbar-left">
+          <div class="form-group">
+          <input type="text" class="form-control" placeholder="Keyword search" name="l" focus>
+          <button type="submit" class="btn btn-warning">Search more jobs</button>
+          </div>  
+        </form>
+        <form method="POST" action="/sessions?_method=DELETE" class="navbar-form navbar-right">
+          <div class="form-group">
+          <button type="submit" class="btn btn-danger">Log-out</button>
+          </div>  
+        </form>
+        <form method="GET" action="/users/<%= user.id %>/edit" class="navbar-form navbar-right">
+          <div class="form-group">
+          <button type="submit" class="btn btn-primary">Edit profile</button>
+          </div>  
+        </form>
+        <form method="GET" action="/jobs" class="navbar-form navbar-right">
+          <div class="form-group">
+          <button type="submit" class="btn btn-primary">Edit saved jobs</button>
+          </div>  
+        </form>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav><br>
+  <div class="jumbotron">
+    <div class="page-header">
+      <h1>Welcome to Pipel1ne <small>The #1 source for veterans</small></h1>
+      <h3><%= user.first_name %> <%= user.last_name %>'s Saved Jobs </h3>
+    </div>     
+  </div>
 
+</body>
 
-    function initialize() {
-      geocoder = new google.maps.Geocoder();
-      var latlng = new google.maps.LatLng(37.785300, -122.436674);
-      var mapOptions = {
-        zoom: 15,
-        center: latlng
-      }
-      map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  <ul class="list-group">
+    <% for (var i = 0; i < jobs.length; i++) { %>
+    <li class="list-group-item">
+      Job Title: <%= jobs[i].title %><br>
+      Company: <%= jobs[i].company %><br>
+      Location: <%= jobs[i].location %><br>
+      <form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-success">Apply (comming soon)</button>
+        </div>  
+      </form>
+    </li>
+    <% } %>
+  </ul>
 
-      };
-
-    function codeAddress() {
-      var address = document.getElementById('address').value;
-      geocoder.geocode( { 'address': address}, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          map.setCenter(results[0].geometry.location);
-          var marker = new google.maps.Marker({
-              map: map,
-              position: results[0].geometry.location
-          });
-        } else {
-          alert('Geocode was not successful for the following reason: ' + status);
-        }
-      });
-    }
-
-
-    google.maps.event.addDomListener(window, 'load', initialize);
-
-    window.onload = function() {
-      console.log('loaded!');
-      codeAddress();
-    }
-        </script>
-
-    <title>Pipel1ne</title>    
-
-  </head>
-  <body>
-    <h1><%= user.first_name %> <%= user.last_name %>'s Saved Jobs </h1>
-      <ul>
-        <% for (var i = 0; i < jobs.length; i++) { %>
-          <li>
-            Job Title: <%= jobs[i].title %><br>
-            Company: <%= jobs[i].company %><br>
-            Location: <%= jobs[i].location %><br>
-          </li>
-        <% } %>
-       
-      </ul>
-      <button><a href="http://localhost:5000/">Main Page</a></button> 
-      <button><a href="http://localhost:5000/users/<%= user.id %>/edit">Edit Profile</a></button> 
-      <button><a href="http://localhost:5000/jobs">Edit Saved Jobs</a></button> 
-      <form method="GET" action="/search" >
-        <input type="text" name = "l" placeholder="Keyword Search" >
-        <button class = "btn-hot">Search</button>
-      </form> 
-    <form method="POST" action="/?_method=DELETE">
-      <input type="submit" value="Logout">
-    </form>
-    <div id="map-canvas"></div>
-  </body>
+</body>
 </html>

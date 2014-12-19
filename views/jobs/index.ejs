@@ -1,25 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Edit Jobs</title>
+  <script type="text/javascript" src="http://gdc.indeed.com/ads/apiresults.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <title>Edit user</title>  
 </head>
 <body>
-	 <h1><%= user.first_name %> <%= user.last_name %>'s Saved Jobs </h1>
-      <ul>
-        <% for (var i = 0; i < jobs.length; i++) { %>
-          <li>
-            Job Title: <%= jobs[i].title %><br>
-            Company: <%= jobs[i].company %><br>
-            Job Key: <%= jobs[i].job_key %>
-            <form id="deleteJob" method="post" action="/jobs/<%= jobs[i].id %>?_method=DELETE"> 
-                <input type="submit" value="Delete Job">
-            </form>
-          </li>
-        <% } %>
-      </ul>
-  <form method="GET" action="/users/<%= user.id %>"> 
-          <input type="submit" value="Profile">
-  </form>
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <form method="GET" action="/users/<%= user.id %>" class="navbar-form navbar-left">
+          <div class="form-group">
+          <button type="submit" class="btn btn-primary">Profile</button>
+          </div>  
+        </form>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav><br>
+  <div class="jumbotron">
+    <div class="page-header">
+      <h1>Welcome to Pipel1ne <small>The #1 source for veterans</small></h1>
+      <h3><%= user.first_name %> <%= user.last_name %>'s Saved Jobs </h3>
+    </div>     
+  </div>
+  <ul class="list-group">
+    <% for (var i = 0; i < jobs.length; i++) { %>
+    <li class="list-group-item">
+      Job Title: <%= jobs[i].title %><br>
+      Company: <%= jobs[i].company %><br>
+      Job Key: <%= jobs[i].job_key %>
+      <form method="POST" action="/jobs/<%= jobs[i].id %>?_method=DELETE">
+        <div class="form-group">
+          <button type="submit" class="btn btn-danger">Delete job</button>
+        </div>  
+      </form>
+    </li>
+    <% } %>
+  </ul>
 
 </body>
 </html>
